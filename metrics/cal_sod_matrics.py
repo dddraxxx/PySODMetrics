@@ -211,6 +211,9 @@ def cal_image_matrics(
             pre_prefix = method_dataset_info.get("prefix", "")
             pre_suffix = method_dataset_info["suffix"]
             pre_root = method_dataset_info["path"]
+            if not os.path.exists(pre_root):
+                print("Dataset path does not exist: ", pre_root)
+                continue
             pre_name_list = get_name_list(
                 data_path=pre_root, name_prefix=pre_prefix, name_suffix=pre_suffix
             )

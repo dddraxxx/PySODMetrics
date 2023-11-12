@@ -277,7 +277,7 @@ gen
 # private files
 /output/
 /untracked/
-/configs/
+# /configs/
 # /*.py
 /*.sh
 /results/rgb_sod.md

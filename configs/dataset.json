@@ -1,0 +1,35 @@
+{
+  "COD10K": {
+    "root": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/COD10K",
+    "image": {
+      "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/COD10K/Image",
+      "suffix": ".jpg"
+    },
+    "mask": {
+      "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/COD10K/GT",
+      "suffix": ".png"
+    }
+  },
+    "CHAMELEON": {
+      "root": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CHAMELEON",
+      "image": {
+        "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CHAMELEON/Image",
+        "suffix": ".jpg"
+      },
+      "mask": {
+        "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CHAMELEON/GT",
+        "suffix": ".png"
+      }
+    },
+    "CAMO": {
+      "root": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CAMO",
+      "image": {
+        "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CAMO/Image",
+        "suffix": ".jpg"
+      },
+      "mask": {
+        "path": "/root/Workspace-new/qihuad/github/Datasets/cod/TestDataset/CAMO/GT",
+        "suffix": ".png"
+      }
+    }
+}
