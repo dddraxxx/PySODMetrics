@@ -114,6 +114,7 @@ def cal_image_matrics(
     num_workers: int = 2,
     ncols_tqdm: int = 79,
     metric_names: tuple = ("sm", "wfm", "mae", "fmeasure", "em"),
+    eval_list: list = None,
 ):
     """Save the results of all models on different datasets in a `npy` file in the form of a
     dictionary.
@@ -220,6 +221,8 @@ def cal_image_matrics(
 
             # get the intersection
             eval_name_list = sorted(list(set(gt_name_list).intersection(pre_name_list)))
+            if eval_list:
+                eval_name_list = [x for x in eval_name_list if x in eval_list]
             if len(eval_name_list) == 0:
                 tqdm.write(f"{method_name} does not have results on {dataset_name}")
                 continue
@@ -294,4 +297,10 @@ def evaluate(
         metric_recoder.step(pre=pre, gt=gt, gt_path=os.path.join(gt_root, name))
 
     method_results = metric_recoder.show(num_bits=num_bits, return_ndarray=False)
+    # each_results = {}
+    # for k, v in metric_recoder.metric_objs.items():
+    #     for na, va in vars(v).items():
+    #         if isinstance(va, list):
+    #             for i in range(len(names)):
+    #                 each_results[names[i]][na] = va[i]
     return method_results
