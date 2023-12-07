@@ -1,0 +1,16 @@
+{
+    "LISA": {
+        "CAMO": {
+            "path": "/root/Workspace-new/qihuad/github/Datasets/pred/lisa",
+            "suffix": "_mask.png"
+        },
+        "CHAMELEON": {
+            "path": "/root/Workspace-new/qihuad/github/LISA/test_output/CHAMELEON",
+            "suffix": "_mask.png"
+        },
+        "COD10K": {
+            "path": "/root/Workspace-new/qihuad/github/LISA/test_output/COD10K",
+            "suffix": "_mask.png"
+        }
+    }
+}
