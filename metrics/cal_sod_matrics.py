@@ -8,6 +8,7 @@ from threading import RLock as TRLock
 
 import numpy as np
 from tqdm import tqdm
+import pandas as pd
 
 from utils.misc import get_gt_pre_with_name, get_name_list, make_dir
 from utils.print_formatter import formatter_for_tabulate
@@ -20,6 +21,11 @@ from utils.recorders import (
     TxtRecorder,
 )
 
+single_result_list = {
+    'sm': 'sms',
+    'wfm': 'weighted_fms',
+    'mae': 'maes',
+}
 
 class Recorder:
     def __init__(
@@ -73,12 +79,25 @@ class Recorder:
                 metric_names=excel_metric_names,
             )
 
-    def record(self, method_results, dataset_name, method_name):
+        self.each_results = pd.DataFrame(columns=single_result_list.keys())
+
+    def record(self, method_returns, dataset_name, method_name):
         """Record results"""
+        method_results, metrics_recorder = method_returns
         method_curves = method_results.get("sequential")
         method_metrics = method_results["numerical"]
         self.curves[dataset_name][method_name] = method_curves
         self.metrics[dataset_name][method_name] = method_metrics
+
+        # add results to each_results
+        img_name_list = metrics_recorder.img_name_list
+        for k, v in metrics_recorder.metric_objs.items():
+            if k in self.each_results.columns:
+                k_result_list = getattr(v, single_result_list[k])
+                for i in range(len(img_name_list)):
+                    self.each_results.loc[img_name_list[i], k] = k_result_list[i]
+        mean_row_name = f"{dataset_name}_{method_name}_mean"
+        self.each_results.loc[mean_row_name] = self.each_results.mean()
 
     def export(self):
         """After evaluating all methods, export results to ensure the order of names."""
@@ -115,6 +134,7 @@ def cal_image_matrics(
     ncols_tqdm: int = 79,
     metric_names: tuple = ("sm", "wfm", "mae", "fmeasure", "em"),
     eval_list: list = None,
+    save_each_image_path: str = None,
 ):
     """Save the results of all models on different datasets in a `npy` file in the form of a
     dictionary.
@@ -259,6 +279,11 @@ def cal_image_matrics(
         make_dir(os.path.dirname(metrics_npy_path))
         np.save(metrics_npy_path, recorder.metrics)
         tqdm.write(f"All metrics has been saved in {metrics_npy_path}")
+    if save_each_image_path:
+        # to csv
+        each_result = recorder.each_results
+        each_result.to_csv(save_each_image_path)
+        tqdm.write(f"All results has been saved in {save_each_image_path}")
     formatted_string = formatter_for_tabulate(recorder.metrics, method_names, dataset_names)
     tqdm.write(f"All methods have been evaluated:\n{formatted_string}")
 
@@ -294,7 +319,7 @@ def evaluate(
             gt_suffix=gt_suffix,
             to_normalize=False,
         )
-        metric_recoder.step(pre=pre, gt=gt, gt_path=os.path.join(gt_root, name))
+        metric_recoder.step(pre=pre, gt=gt, gt_path=os.path.join(gt_root, name), img_name=name)
 
     method_results = metric_recoder.show(num_bits=num_bits, return_ndarray=False)
     # each_results = {}
@@ -303,4 +328,4 @@ def evaluate(
     #         if isinstance(va, list):
     #             for i in range(len(names)):
     #                 each_results[names[i]][na] = va[i]
-    return method_results
+    return method_results, metric_recoder

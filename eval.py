@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+sys.path.append('.')
 import argparse
 import os
 import textwrap
@@ -117,6 +119,12 @@ def get_args():
         choices=SUPPORTED_METRICS,
         help="Names of metrics",
     )
+    parser.add_argument(
+        '--save-each-image-path',
+        type=str,
+        default=None,
+        help='Path to save each image results.'
+    )
     args = parser.parse_args()
 
     if args.metric_npy:
@@ -129,6 +137,9 @@ def get_args():
         os.makedirs(os.path.dirname(args.record_xlsx), exist_ok=True)
     if args.to_overwrite and not args.record_txt:
         warnings.warn("--to-overwrite only works with a valid --record-txt")
+    if args.save_each_image_path:
+        if os.path.dirname(args.save_each_image_path) != '':
+            os.makedirs(os.path.dirname(args.save_each_image_path), exist_ok=True)
     return args
 
 
@@ -149,7 +160,7 @@ def main():
         exclude_methods=args.exclude_methods,
     )
 
-    eval_list = ['camourflage_00012', 'camourflage_00018', 'camourflage_00061', 'camourflage_00064', 'camourflage_00079', 'camourflage_00087', 'camourflage_00138', 'camourflage_00141', 'camourflage_00207', 'camourflage_00208', 'camourflage_00224']
+    # eval_list = ['camourflage_00012', 'camourflage_00018', 'camourflage_00061', 'camourflage_00064', 'camourflage_00079', 'camourflage_00087', 'camourflage_00138', 'camourflage_00141', 'camourflage_00207', 'camourflage_00208', 'camourflage_00224']
     # 确保多进程在windows上也可以正常使用
     cal_sod_matrics.cal_image_matrics(
         sheet_name="Results",
@@ -164,9 +175,17 @@ def main():
         num_workers=args.num_workers,
         metric_names=args.metric_names,
         ncols_tqdm=119,
-        eval_list= eval_list
+        # eval_list= eval_list,
+        save_each_image_path=args.save_each_image_path
     )
 
 
 if __name__ == "__main__":
+    def catch_exception(type, value, tb):
+        import traceback
+        traceback.print_exception(type, value, tb)
+        import ipdb
+        ipdb.post_mortem(tb)
+    import sys
+    sys.excepthook = catch_exception
     main()

@@ -154,13 +154,15 @@ class GrayscaleMetricRecorder:
                     handler_name=metric_name,
                     metric_handler=metric_handler["handler"](**metric_handler["kwargs"]),
                 )
+        self.img_name_list = []
 
-    def step(self, pre: np.ndarray, gt: np.ndarray, gt_path: str):
+    def step(self, pre: np.ndarray, gt: np.ndarray, gt_path: str, img_name: str = None):
         assert pre.shape == gt.shape, (pre.shape, gt.shape, gt_path)
         assert pre.dtype == gt.dtype == np.uint8, (pre.dtype, gt.dtype, gt_path)
 
         for m_obj in self.metric_objs.values():
             m_obj.step(pre, gt)
+        self.img_name_list.append(img_name)
 
     def show(self, num_bits: int = 3, return_ndarray: bool = False) -> dict:
         """
