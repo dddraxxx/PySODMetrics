@@ -1,0 +1,8 @@
+{
+    "CogVLM":{
+        "CAMO":{
+            "path":"../Datasets/pred/cogvlm/CAMO/where_is_the_{name}?/point_prmp/mask",
+            "suffix": ".png"
+        }
+    }
+}

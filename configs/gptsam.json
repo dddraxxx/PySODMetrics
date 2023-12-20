@@ -1,7 +1,7 @@
 {
     "GPTSAM": {
         "CAMO": {
-            "path": "/root/Workspace-new/qihuad/github/Datasets/pred/gptsam/CAMO/default",
+            "path": "../Datasets/pred/gptsam/CAMO/default",
             "suffix": ".png"
         }
     }
