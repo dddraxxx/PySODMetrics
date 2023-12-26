@@ -26,3 +26,19 @@ python PySODMetrics/eval.py \
         --dataset-json PySODMetrics/configs/dataset.json \
         --method-json PySODMetrics/configs/cogvlm.json \
         --save-each-image-path 'PySODMetrics/camo_cogvlm.csv'
+
+python PySODMetrics/eval.py \
+        --dataset-json PySODMetrics/configs/dataset.json \
+        --method-json PySODMetrics/configs/cogvlm_half.json \
+        --save-each-image-path 'PySODMetrics/camo_cogvlm-half.csv'
+
+# gptsam
+python PySODMetrics/eval.py \
+        --dataset-json PySODMetrics/configs/dataset.json \
+        --method-json PySODMetrics/configs/gptsam.json \
+        --save-each-image-path 'PySODMetrics/camo_gptsam.csv'
+
+python PySODMetrics/eval.py \
+        --dataset-json PySODMetrics/configs/dataset.json \
+        --method-json PySODMetrics/configs/gptsam.json \
+        --save-each-image-path 'PySODMetrics/camo_gptsam_5.csv'

@@ -1,7 +1,7 @@
 {
     "GPTSAM": {
         "CAMO": {
-            "path": "../Datasets/pred/gptsam/CAMO/default",
+            "path": "debug_log/prompt_img/point_pred_mask_5",
             "suffix": ".png"
         }
     }

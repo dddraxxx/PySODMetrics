@@ -1,0 +1,8 @@
+{
+    "CogVLM-half":{
+        "CAMO":{
+            "path":"debug_log/cogvlm/point_prmp",
+            "suffix": ".png"
+        }
+    }
+}
