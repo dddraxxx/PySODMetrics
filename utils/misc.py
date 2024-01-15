@@ -184,8 +184,8 @@ def imread_with_checking(path, for_color: bool = True) -> np.ndarray:
 
 def get_gt_pre_with_name(
     img_name: str,
+    test_img: str,
     gt_root: str,
-    pre_root: str,
     *,
     gt_prefix: str = "",
     pre_prefix: str = "",
@@ -193,7 +193,7 @@ def get_gt_pre_with_name(
     pre_suffix: str = "",
     to_normalize: bool = False,
 ):
-    img_path = os.path.join(pre_root, pre_prefix + img_name + pre_suffix)
+    img_path = str(test_img)
     gt_path = os.path.join(gt_root, gt_prefix + img_name + gt_suffix)
 
     pre = imread_with_checking(img_path, for_color=False)

@@ -127,14 +127,14 @@ def cal_image_matrics(
     xlsx_path: str = "",
     methods_info: dict = None,
     datasets_info: dict = None,
-    curves_npy_path: str = "./curves.npy",
-    metrics_npy_path: str = "./metrics.npy",
+    curves_npy_path: str = "",
+    metrics_npy_path: str = "",
     num_bits: int = 3,
     num_workers: int = 2,
     ncols_tqdm: int = 79,
     metric_names: tuple = ("sm", "wfm", "mae", "fmeasure", "em"),
     eval_list: list = None,
-    save_each_image_path: str = None,
+    save_each_image_result: str = None,
 ):
     """Save the results of all models on different datasets in a `npy` file in the form of a
     dictionary.
@@ -169,9 +169,10 @@ def cal_image_matrics(
         }
 
     """
-    if all([x in BinaryMetricRecorder.suppoted_metrics for x in metric_names]):
-        metric_class = BinaryMetricRecorder
-    elif all([x in GrayscaleMetricRecorder.suppoted_metrics for x in metric_names]):
+    # if all([x in BinaryMetricRecorder.suppoted_metrics for x in metric_names]):
+    #     metric_class = BinaryMetricRecorder
+    # el
+    if all([x in GrayscaleMetricRecorder.suppoted_metrics for x in metric_names]):
         metric_class = GrayscaleMetricRecorder
     else:
         raise ValueError(metric_names)
@@ -221,23 +222,8 @@ def cal_image_matrics(
         assert len(gt_name_list) > 0, "there is not ground truth."
 
         # ==>> test the intersection between pre and gt for each method <<==
-        for method_name, method_info in methods_info.items():
-            method_root = method_info["path_dict"]
-            method_dataset_info = method_root.get(dataset_name, None)
-            if method_dataset_info is None:
-                tqdm.write(f"{method_name} does not have results on {dataset_name}")
-                continue
-
-            # 预测结果存放路径下的图片文件名字列表和扩展名称
-            pre_prefix = method_dataset_info.get("prefix", "")
-            pre_suffix = method_dataset_info["suffix"]
-            pre_root = method_dataset_info["path"]
-            if not os.path.exists(pre_root):
-                print("Dataset path does not exist: ", pre_root)
-                continue
-            pre_name_list = get_name_list(
-                data_path=pre_root, name_prefix=pre_prefix, name_suffix=pre_suffix
-            )
+        for method_name, test_data in methods_info.items():
+            pre_name_list = [t for t in test_data]
 
             # get the intersection
             eval_name_list = sorted(list(set(gt_name_list).intersection(pre_name_list)))
@@ -250,9 +236,7 @@ def cal_image_matrics(
             kwargs = dict(
                 names=eval_name_list,
                 num_bits=num_bits,
-                pre_root=pre_root,
-                pre_prefix=pre_prefix,
-                pre_suffix=pre_suffix,
+                test_data=test_data,
                 gt_root=gt_root,
                 gt_prefix=gt_prefix,
                 gt_suffix=gt_suffix,
@@ -279,24 +263,23 @@ def cal_image_matrics(
         make_dir(os.path.dirname(metrics_npy_path))
         np.save(metrics_npy_path, recorder.metrics)
         tqdm.write(f"All metrics has been saved in {metrics_npy_path}")
-    if save_each_image_path:
-        # to csv
-        each_result = recorder.each_results
-        each_result.to_csv(save_each_image_path)
-        tqdm.write(f"All results has been saved in {save_each_image_path}")
     formatted_string = formatter_for_tabulate(recorder.metrics, method_names, dataset_names)
     tqdm.write(f"All methods have been evaluated:\n{formatted_string}")
+    if save_each_image_result:
+        # to csv
+        each_result = recorder.each_results
+        each_result.to_csv(save_each_image_result)
+        tqdm.write(f"All results has been saved in {save_each_image_result}")
+        return each_result
 
 
 def evaluate(
     names,
     num_bits,
+    test_data,
     gt_root,
     gt_prefix,
     gt_suffix,
-    pre_root,
-    pre_prefix,
-    pre_suffix,
     metric_class,
     desc="",
     proc_idx=None,
@@ -311,9 +294,7 @@ def evaluate(
     ):
         gt, pre = get_gt_pre_with_name(
             img_name=name,
-            pre_root=pre_root,
-            pre_prefix=pre_prefix,
-            pre_suffix=pre_suffix,
+            test_img=test_data[name],
             gt_root=gt_root,
             gt_prefix=gt_prefix,
             gt_suffix=gt_suffix,
