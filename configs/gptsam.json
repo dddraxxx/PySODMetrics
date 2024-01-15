@@ -1,8 +1,0 @@
-{
-    "GPTSAM": {
-        "CAMO": {
-            "path": "debug_log/prompt_img/point_pred_mask_5",
-            "suffix": ".png"
-        }
-    }
-}
